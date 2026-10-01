@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="bg_building" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a3544"/>
+      <stop offset="1" stop-color="#0b1c2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#bg_building)"/>
+  <path d="M0 292 C160 250 300 310 640 240 V400 H0 Z" fill="#0b1c2e" opacity=".28"/>
+  <text x="40" y="64" fill="#fff" font-family="Segoe UI, PingFang SC, sans-serif" font-size="26" font-weight="600">建材钢材</text>
+  <text x="40" y="92" fill="#c5d0dc" font-family="Segoe UI, sans-serif" font-size="13">CN · KZ · RU</text>
+  <g transform="translate(118,168)">
+    <ellipse cx="210" cy="178" rx="200" ry="14" fill="#0b1c2e" opacity=".28"/>
+    <rect x="8" y="48" width="248" height="92" rx="10" fill="#e2c48a"/>
+    <rect x="8" y="48" width="248" height="18" rx="10" fill="#fff" opacity=".28"/>
+    <rect x="8" y="122" width="248" height="18" fill="#102c48"/>
+    <path d="M8 58h24v72H8z" fill="#102c48"/>
+    <g stroke="#102c48" stroke-opacity=".18" stroke-width="4">
+      <path d="M56 54v78M90 54v78M124 54v78M158 54v78M192 54v78M226 54v78"/>
+    </g>
+    <path d="M268 68h46l38-26h36v104H348v-16H268z" fill="#163a5f"/>
+    <path d="M318 48l30-22h34v42l-24 18H318z" fill="#9ec9ea"/>
+    <path d="M318 48l30-22h34v8l-26 18H318z" fill="#fff" opacity=".35"/>
+    <rect x="278" y="78" width="22" height="34" rx="3" fill="#7eb3d6" opacity=".9"/>
+    <rect x="368" y="128" width="42" height="14" rx="3" fill="#c5d0dc"/>
+    <circle cx="378" cy="48" r="5" fill="#d79a2b"/>
+    <circle cx="392" cy="48" r="5" fill="#d79a2b"/>
+    <g fill="#121820">
+      <circle cx="52" cy="148" r="22"/>
+      <circle cx="108" cy="148" r="22"/>
+      <circle cx="196" cy="148" r="22"/>
+      <circle cx="292" cy="148" r="22"/>
+      <circle cx="356" cy="148" r="22"/>
+    </g>
+    <g fill="#d5dee8">
+      <circle cx="52" cy="148" r="12"/>
+      <circle cx="108" cy="148" r="12"/>
+      <circle cx="196" cy="148" r="12"/>
+      <circle cx="292" cy="148" r="12"/>
+      <circle cx="356" cy="148" r="12"/>
+    </g>
+    <g fill="#3a4654">
+      <circle cx="52" cy="148" r="5"/>
+      <circle cx="108" cy="148" r="5"/>
+      <circle cx="196" cy="148" r="5"/>
+      <circle cx="292" cy="148" r="5"/>
+      <circle cx="356" cy="148" r="5"/>
+    </g>
+  </g>
+</svg>

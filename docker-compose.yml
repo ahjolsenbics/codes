@@ -1,0 +1,82 @@
+# 在 codes/ 执行
+#
+# 本地 / 服务器同一套：
+#   docker compose --profile app up -d --build
+#
+# 浏览器打开 http://服务器IP:8080
+# API 直连 http://服务器IP:8000
+#
+# 首次启动会自动写入演示数据（货盘、司机、运单、资质），
+# 与当前展示环境同一套，无需再导入数据库文件。
+#
+# 数据卷：yunmm_pg（Postgres）、yunmm_uploads（上传文件）
+# 重置演示数据：docker compose --profile app down -v && docker compose --profile app up -d --build
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: yunmm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: yunmm
+      POSTGRES_USER: yunmm
+      POSTGRES_PASSWORD: yunmm_demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - yunmm_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yunmm -d yunmm"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: yunmm-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: yunmm-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://yunmm:yunmm_demo@postgres:5432/yunmm
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /app/data/uploads
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    ports:
+      - "8000:8000"
+    volumes:
+      - yunmm_uploads:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  admin:
+    profiles: ["app"]
+    build:
+      context: ./apps/admin
+      dockerfile: Dockerfile
+    container_name: yunmm-admin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  yunmm_pg:
+  yunmm_uploads:

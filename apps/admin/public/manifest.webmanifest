@@ -1,0 +1,12 @@
+{
+  "name": "运满满",
+  "short_name": "YunMM",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#102C48",
+  "theme_color": "#163A5F",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
