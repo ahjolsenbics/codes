@@ -1,9 +1,9 @@
 FROM node:22-alpine AS build
 WORKDIR /web
-RUN corepack enable
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm config set registry https://registry.npmmirror.com \
-    && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 

@@ -64,10 +64,9 @@ git push -u origin main
 
 ### 做法 B：整个 YunMM 项目已经是一个 Git 仓库
 
-照常 push。到 Railway 后必须改两处（见第 5 步）：
+照常 push。到 Railway 后必须改一处（见第 4.3 步）：
 
 - Root Directory = `codes`
-- Config-as-code path = `/codes/railway.toml`
 
 ---
 
@@ -96,13 +95,23 @@ git push -u origin main
 2. 服务名称改成 `web`（方便对照本文档）。
 3. 打开 `web` → **Settings**：
 
-| 配置项 | 做法 A（仓库就是 codes） | 做法 B（仓库是 YunMM 根） |
+仓库地址如果是 `github.com/你的用户名/codes`（做法 A），**Root Directory 必须留空**。填成 `codes` 会立刻报 `There was an error deploying from source`。
+
+2026-08-28 之后新建的服务 **不能再用** `railway.toml`（Config as Code 已废弃）。Settings 里 **Railway Config File 必须留空**，否则也会报同一句 source 错误。
+
+| 配置项 | 做法 A（仓库就是 codes，例如 `ahjolsenbics/codes`） | 做法 B（仓库是 YunMM 根） |
 | --- | --- | --- |
-| Root Directory | 留空 | `codes` |
+| Root Directory | **留空**（不要填 `codes`） | `codes` |
 | Builder | Dockerfile | Dockerfile |
-| Dockerfile Path | `Dockerfile.railway` | `Dockerfile.railway` |
-| Config-as-code | `/railway.toml` 或留空 | `/codes/railway.toml` |
+| Dockerfile Path | `/Dockerfile` | `/Dockerfile` |
+| Railway Config File | **留空**（不要填 `/railway.toml`） | **留空** |
 | Watch Paths | 留空或 `**` | `codes/**` |
+| Branch | `main` | `main` |
+
+同一页 **Deploy** 里再设：
+
+- Healthcheck Path：`/api/v1/health`
+- Healthcheck Timeout：`180`
 
 4. 同一页 **Networking → Generate Domain**，记下 `https://xxxx.up.railway.app`。
 5. 先不要急着看页面，先配变量。
@@ -208,7 +217,7 @@ railway up
 railway domain
 ```
 
-`railway up` 会用当前目录的 `Dockerfile.railway`（由 `railway.toml` 指定）上传并构建。
+`railway up` 会用当前目录的 `Dockerfile` 构建。
 
 ---
 
@@ -216,11 +225,13 @@ railway domain
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
+| `Deploying service from xxx/codes` 然后 `There was an error deploying from source` | ① Root Directory 填了 `codes`（仓库根已经是 codes）；② **Railway Config File 填了 `/railway.toml`**——2026-08-28 后新服务不能用 Config as Code；③ GitHub 应用没授权这个仓库 | Root Directory **清空**；Railway Config File **清空**；Dockerfile Path 填 `/Dockerfile`；到 [GitHub Applications → Railway](https://github.com/settings/installations) 勾上仓库后再 Deploy |
 | 构建报 `COPY backend/requirements.txt: not found` | 构建上下文不是 `codes/` | Root Directory 改成 `codes`，或把 Git 仓库改成只含 `codes` |
-| 构建用了 Nixpacks / 没吃到 Dockerfile | Settings 里 Builder = Dockerfile，Dockerfile Path = `Dockerfile.railway` |
+| 构建用了 Nixpacks / 没吃到 Dockerfile | Settings 里 Builder = Dockerfile，Dockerfile Path = `/Dockerfile` |
+| `ERR_PNPM_TARBALL_URL_MISMATCH` / lockfile failed supply-chain policy | 本机 `pnpm-lock.yaml` 里的包地址是 npmmirror，Railway 用官方 npm 源校验对不上；Corepack 还会拉最新 pnpm 12 | 已把锁文件改成 `registry.npmjs.org`，镜像里钉死 `pnpm@9.15.9`。把这次改动 push 后再 Deploy |
 | 健康检查超时、容器反复重启 | 第一次连不上库，或 `DATABASE_URL` 没配上 | 确认变量引用的是当前项目里的 Postgres；看 Postgres 是否 Online；再 Restart `web` |
 | 日志里 `could not translate host name` / IPv6 连不上 | 偶发的私网解析问题 | 临时改为 Postgres 服务 Variables 里的 **公网** `DATABASE_URL`，并在末尾加 `?sslmode=require`（仅排查用） |
-| 打开域名是 502 / Application failed | 进程没监听 `$PORT` | 确认用的是 `Dockerfile.railway`，启动命令带 `--port ${PORT:-8000}` |
+| 打开域名是 502 / Application failed | 进程没监听 `$PORT` | 确认用的是仓库根目录 `Dockerfile`，启动命令带 `--port ${PORT:-8000}` |
 | 页面出了但登录失败 | 库是空的或 seed 失败 | 看启动日志有没有 `Demo 数据已写入`；没有就按第 5 节清库重启 |
 | 国内打不开 | 海外节点或 DNS | 换节点重试、或前面加国内反代；展示阶段可让对方开代理访问 |
 
