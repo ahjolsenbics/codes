@@ -9,10 +9,8 @@ import {
   cargoClass,
   company,
   countryName,
-  customs,
   entity,
   kycLabel,
-  laneText,
   ledgerLabel,
   loadStatus,
   money,
@@ -122,7 +120,6 @@ const signData = ref('')
 const drawing = ref(false)
 const unlockedPhone = ref('')
 const notifySms = ref(true)
-const pubPhotos = ref<string[]>([])
 const syncedAt = ref('')
 const statusFilter = ref('')
 const cargoFilter = ref('')
@@ -164,11 +161,6 @@ const loadTo = ref('')
 const loadSort = ref<'new' | 'price'>('new')
 const quoteNote = ref('')
 const quoteEta = ref('2026-09-22 18:00')
-const loadPhotos = computed(() => {
-  const list = detail.value?.photos
-  const raw = Array.isArray(list) ? list : []
-  return raw.filter((src: string) => src && !String(src).includes('/covers/'))
-})
 const payAmount = ref(2000)
 const payChannel = ref('wechat')
 const estTruck = ref('13.5')
@@ -725,13 +717,6 @@ async function publish() {
 
 const payChannels = ['wechat', 'alipay', 'unionpay', 'kaspi']
 
-function credIcon(kind: string) {
-  if (kind === 'agent' || kind === 'drive' || kind === 'id_card' || kind === 'license' || kind === 'id_card_hold') return 'me'
-  if (kind === 'auth' || kind === 'green' || kind === 'green_card' || kind === 'tir' || kind === 'road_permit') return 'shield'
-  if (kind === 'vehicle' || kind === 'plate' || kind === 'truck_photo' || kind === 'truck_front' || kind === 'truck_side' || kind === 'truck_box') return 'loads'
-  return 'orders'
-}
-
 function credKind(kind: string) {
   if (kind === 'business_license' || kind === 'biz') return 'biz'
   if (kind === 'operator_id' || kind === 'agent') return 'agent'
@@ -757,18 +742,6 @@ function credRow(kind: string) {
 
 function bodyLabel(v: string) {
   return v === 'reefer' ? t('app.bodyReefer') : t('app.bodyVan')
-}
-
-function daysText(n: unknown) {
-  const v = Number(n)
-  if (!Number.isFinite(v)) return ''
-  if (v < 0) return t('app.expired')
-  return tf('app.daysLeft', { n: v })
-}
-
-function togglePhoto(src: string) {
-  if (pubPhotos.value.includes(src)) pubPhotos.value = pubPhotos.value.filter((x) => x !== src)
-  else if (pubPhotos.value.length < 9) pubPhotos.value = [...pubPhotos.value, src]
 }
 
 async function unlockPeer() {

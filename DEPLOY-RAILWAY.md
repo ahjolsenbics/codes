@@ -229,7 +229,7 @@ railway domain
 | 构建报 `COPY backend/requirements.txt: not found` | 构建上下文不是 `codes/` | Root Directory 改成 `codes`，或把 Git 仓库改成只含 `codes` |
 | 构建用了 Nixpacks / 没吃到 Dockerfile | Settings 里 Builder = Dockerfile，Dockerfile Path = `/Dockerfile` |
 | `ERR_PNPM_TARBALL_URL_MISMATCH` / lockfile failed supply-chain policy | 本机 `pnpm-lock.yaml` 里的包地址是 npmmirror，Railway 用官方 npm 源校验对不上；Corepack 还会拉最新 pnpm 12 | 已把锁文件改成 `registry.npmjs.org`，镜像里钉死 `pnpm@9.15.9`。把这次改动 push 后再 Deploy |
-| 健康检查超时、容器反复重启 | 第一次连不上库，或 `DATABASE_URL` 没配上 | 确认变量引用的是当前项目里的 Postgres；看 Postgres 是否 Online；再 Restart `web` |
+| 健康检查超时、容器反复重启 | 第一次连不上库，或 `DATABASE_URL` 没配上，或健康检查超时太短（启动时要灌演示数据） | 确认变量引用的是当前项目里的 Postgres；Postgres 为 Online；Deploy 里 Healthcheck Path=`/api/v1/health`、Timeout=`180`；再 Restart `web` |
 | 日志里 `could not translate host name` / IPv6 连不上 | 偶发的私网解析问题 | 临时改为 Postgres 服务 Variables 里的 **公网** `DATABASE_URL`，并在末尾加 `?sslmode=require`（仅排查用） |
 | 打开域名是 502 / Application failed | 进程没监听 `$PORT` | 确认用的是仓库根目录 `Dockerfile`，启动命令带 `--port ${PORT:-8000}` |
 | 页面出了但登录失败 | 库是空的或 seed 失败 | 看启动日志有没有 `Demo 数据已写入`；没有就按第 5 节清库重启 |

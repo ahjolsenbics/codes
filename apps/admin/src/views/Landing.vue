@@ -12,12 +12,11 @@ import { compact, corridorRate, money, orderStatus, portLabel, tone, waitMin } f
 import { t, tf } from '../i18n'
 import { PUBLIC_BILLS } from '../siteData'
 import { useMarket } from '../useMarket'
-import { appRoleFromToken, deskPath, isAppAuthed } from '../auth'
+import { deskPath, isAppAuthed } from '../auth'
 
 const router = useRouter()
 const { market } = useMarket()
 const authed = isAppAuthed
-const myRole = computed(() => appRoleFromToken())
 const shipperTo = computed(() => deskPath('shipper'))
 const driverTo = computed(() => deskPath('driver'))
 const liveKind = ref<'loads' | 'trucks'>('loads')

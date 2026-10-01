@@ -14,12 +14,16 @@ connect_args = {}
 if settings.database_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
-engine = create_engine(
-    settings.database_url,
-    echo=False,
-    future=True,
-    connect_args=connect_args,
-)
+engine_kwargs: dict = {
+    "echo": False,
+    "future": True,
+    "connect_args": connect_args,
+}
+if not settings.database_url.startswith("sqlite"):
+    engine_kwargs["pool_pre_ping"] = True
+    engine_kwargs["pool_recycle"] = 300
+
+engine = create_engine(settings.database_url, **engine_kwargs)
 if settings.database_url.startswith("sqlite"):
 
     @event.listens_for(engine, "connect")
@@ -87,6 +91,17 @@ _ALTERS: list[tuple[str, str, str]] = [
 ]
 
 
+def _column_ddl(ddl: str) -> str:
+    """补列语句最初按 SQLite 写，Postgres 不认 DATETIME / BOOLEAN DEFAULT 1。"""
+    if settings.database_url.startswith("sqlite"):
+        return ddl
+    return (
+        ddl.replace("DATETIME", "TIMESTAMP")
+        .replace("BOOLEAN DEFAULT 1", "BOOLEAN DEFAULT TRUE")
+        .replace("BOOLEAN DEFAULT 0", "BOOLEAN DEFAULT FALSE")
+    )
+
+
 def ensure_schema() -> None:
     """已有库不会因 create_all 自动加列，启动时按表补齐字段。"""
     insp = inspect(engine)
@@ -97,7 +112,7 @@ def ensure_schema() -> None:
             continue
         cols = {c["name"] for c in insp.get_columns(table)}
         if col not in cols:
-            stmts.append(f"ALTER TABLE {table} ADD COLUMN {col} {ddl}")
+            stmts.append(f"ALTER TABLE {table} ADD COLUMN {col} {_column_ddl(ddl)}")
     if not stmts:
         return
     with engine.begin() as conn:

@@ -32,7 +32,7 @@ async function call(path: string, init: RequestInit, token: string | null) {
   const headers = new Headers(init.headers)
   headers.set('Content-Type', 'application/json')
   if (token) headers.set('Authorization', `Bearer ${token}`)
-  const res = await fetch(path, { ...init, headers, signal: AbortSignal.timeout(4000) })
+  const res = await fetch(path, { ...init, headers, signal: AbortSignal.timeout(15000) })
   const data = await res.json()
   if (!res.ok) throw new Error(JSON.stringify(data.detail ?? data))
   return data
