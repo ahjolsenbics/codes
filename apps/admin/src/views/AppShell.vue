@@ -1920,7 +1920,7 @@ function goTab(i: number) {
 .pad { padding: 0 0 40px; }
 .pad h2 { font-size: 26px; letter-spacing: -0.03em; margin: 4px 0 8px; }
 .hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
-.entry-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+.entry-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 22px; }
 .entry {
   text-align: center;
   background: #fff;
@@ -1939,7 +1939,7 @@ function goTab(i: number) {
 .steps-form {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   margin: 0 0 16px;
   padding: 0;
@@ -1973,7 +1973,7 @@ function goTab(i: number) {
 }
 .desk-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 24vw);
   gap: 28px;
   align-items: start;
 }
@@ -2133,7 +2133,7 @@ function goTab(i: number) {
 .form-grid label { display: grid; gap: 6px; font-size: 13px; color: #5c6b7a; font-weight: 650; }
 .account-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }

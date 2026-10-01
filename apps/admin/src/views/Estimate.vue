@@ -193,7 +193,7 @@ const pager = usePager(lanes, 12)
 </template>
 
 <style scoped>
-.layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; margin-bottom: 28px; align-items: start; }
+.layout { display: grid; grid-template-columns: minmax(260px, 28vw) minmax(0, 1fr); gap: 16px; margin-bottom: 28px; align-items: start; }
 .panel { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
 .form { display: grid; gap: 12px; }
 .swap {

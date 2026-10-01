@@ -16,7 +16,7 @@ const password = ref('')
 const confirm = ref('')
 const name = ref('')
 const agree = ref(false)
-const mode = ref<'sms' | 'pwd'>('sms')
+const mode = ref<'sms' | 'pwd'>('pwd')
 const registering = computed(() => String(route.query.mode || '') === 'register')
 const loading = ref(false)
 const sending = ref(false)
@@ -24,11 +24,27 @@ const error = ref('')
 const hint = ref('')
 const wait = ref(0)
 
+const DEMO = {
+  shipper: { zone: '+7', phone: '7270001005', password: 'Yunmm@2026', code: '000000' },
+  driver: { zone: '+7', phone: '7010001002', password: 'Yunmm@2026', code: '000000' },
+} as const
+
+function fillDemo(next = role.value) {
+  if (registering.value) return
+  const demo = DEMO[next]
+  zone.value = demo.zone
+  phone.value = demo.phone
+  password.value = demo.password
+  code.value = demo.code
+}
+
 onMounted(() => {
   if (isAppAuthed() && !registering.value) {
     const next = route.query.next
     router.replace(typeof next === 'string' && next.startsWith('/') ? next : '/')
+    return
   }
+  fillDemo()
 })
 
 watch(() => route.query.role, (next) => {
@@ -37,12 +53,26 @@ watch(() => route.query.role, (next) => {
 
 watch(role, () => {
   error.value = ''
+  fillDemo()
+})
+
+watch(registering, (on) => {
+  error.value = ''
+  if (on) {
+    phone.value = ''
+    password.value = ''
+    code.value = ''
+    confirm.value = ''
+    mode.value = 'sms'
+    return
+  }
+  fillDemo()
 })
 
 const dest = computed(() => {
   const next = route.query.next
   if (typeof next === 'string' && next.startsWith('/') && !next.startsWith('//')) return next
-  return '/'
+  return role.value === 'driver' ? '/app/driver' : '/app/shipper'
 })
 
 function failMessage(e: unknown) {
@@ -132,6 +162,7 @@ function goMode(next: 'login' | 'register') {
         <div class="head">
           <h2>{{ registering ? t('auth.register') : t('auth.login') }}</h2>
           <p>{{ registering ? t('auth.registerLead') : t('login.lead') }}</p>
+          <p v-if="!registering" class="demo">{{ t('login.demoReady') }}</p>
         </div>
         <div class="roles">
           <button type="button" :class="{ on: role === 'shipper' }" @click="role = 'shipper'">{{ t('role.shipper') }}</button>
@@ -155,19 +186,20 @@ function goMode(next: 'login' | 'register') {
             <input v-model="phone" class="field" inputmode="tel" autocomplete="tel" :placeholder="t('login.phonePh')" />
           </div>
         </label>
-        <label v-if="registering || mode === 'sms'">
+        <label>
           {{ t('login.code') }}
-          <div class="code-row">
+          <div :class="{ 'code-row': registering }">
             <input v-model="code" class="field" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" />
-            <button class="btn btn-line" type="button" :disabled="sending || wait > 0" @click="sendCode">
+            <button v-if="registering" class="btn btn-line" type="button" :disabled="sending || wait > 0" @click="sendCode">
               {{ wait > 0 ? `${wait}s` : t('login.send') }}
             </button>
           </div>
         </label>
-        <label v-if="registering || mode === 'pwd'">
+        <label>
           {{ t('login.password') }}
           <input v-model="password" class="field" type="password" :autocomplete="registering ? 'new-password' : 'current-password'" />
-          <small class="hint">{{ t('auth.pwdRule') }}</small>
+          <small v-if="registering" class="hint">{{ t('auth.pwdRule') }}</small>
+          <small v-else class="hint">{{ t('login.pwdHint') }}</small>
         </label>
         <label v-if="registering">
           {{ t('login.confirm') }}
@@ -201,19 +233,19 @@ function goMode(next: 'login' | 'register') {
 }
 .split {
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 56px;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
+  gap: clamp(28px, 4vw, 80px);
   align-items: center;
-  padding: 56px 0 88px;
+  padding: clamp(28px, 6vh, 72px) 0 clamp(48px, 8vh, 96px);
 }
 .story h1 {
   margin: 0 0 16px;
-  font-size: 44px;
+  font-size: clamp(28px, 3vw, 48px);
   line-height: 1.15;
   letter-spacing: -0.04em;
   color: #1c2430;
 }
-.story p { margin: 0; color: #5c6b7a; max-width: 38ch; font-size: 16px; line-height: 1.75; }
+.story p { margin: 0; color: #5c6b7a; max-width: 42ch; font-size: clamp(15px, 1.05vw, 18px); line-height: 1.75; }
 .panel {
   width: 100%;
   background: #fff;
@@ -226,6 +258,7 @@ function goMode(next: 'login' | 'register') {
 }
 .head h2 { margin: 0; font-size: 24px; color: #1c2430; }
 .head p { margin: 6px 0 0; color: #5c6b7a; font-size: 13px; line-height: 1.5; }
+.head .demo { color: #0e6a4c; font-weight: 650; }
 .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .roles button {
   height: 42px;

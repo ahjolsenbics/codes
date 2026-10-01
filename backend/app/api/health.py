@@ -8,8 +8,9 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.db import get_db
-from app.models import Load, Port, User
-from app.services import serialize_load_public
+from app.deps import get_optional_user
+from app.models import Load, Port, Quote, ShipperProfile, User
+from app.services import serialize_load, serialize_load_public
 
 router = APIRouter()
 
@@ -44,12 +45,30 @@ def public_config() -> dict:
     }
 
 
+def _pack_load(db: Session, load: Load, authed: bool) -> dict:
+    if not authed:
+        return serialize_load_public(load)
+    quotes = db.scalars(select(Quote.amount).where(Quote.load_id == load.id)).all()
+    lowest = min(quotes) if quotes else None
+    data = serialize_load(load, len(quotes), lowest)
+    profile = db.get(ShipperProfile, load.shipper_id)
+    owner = db.get(User, load.shipper_id)
+    data["company"] = profile.company if profile else ""
+    data["credit"] = owner.credit if owner else None
+    data["verified"] = bool(owner and owner.kyc_status == "approved")
+    return data
+
+
 @router.get("/public/market")
-def public_market(db: Session = Depends(get_db)) -> dict:
-    """展示页用货盘。数字按运营中平台量级演示，列表来自 Demo 库。"""
+def public_market(
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_optional_user),
+) -> dict:
+    """展示页用货盘。未登录只给线路与货类；登录后才返回报价与货主主体。"""
     loads = db.scalars(select(Load).order_by(Load.created_at.desc()).limit(16)).all()
     ports = db.scalars(select(Port)).all()
     users = db.scalar(select(func.count(User.id))) or 0
+    authed = user is not None
     return {
         "tagline": "China — Kazakhstan — Russia road freight exchange",
         "index": 1864,
@@ -60,7 +79,7 @@ def public_market(db: Session = Depends(get_db)) -> dict:
         "loadsToday": 186,
         "trucksToday": 42,
         "demoUsers": users,
-        "items": [serialize_load_public(x) for x in loads],
+        "items": [_pack_load(db, x, authed) for x in loads],
         "ports": [
             {
                 "id": p.id,

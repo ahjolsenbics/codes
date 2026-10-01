@@ -315,8 +315,8 @@ function openLoad(id: string) {
               <article>
                 <div class="chips"><span>18.4t</span><span>13.7m</span><span>{{ t('mode.bid') }}</span></div>
                 <b>{{ t('phone.driver') }}</b>
-                <p>新A·D3821</p>
-                <strong>{{ money(sample.freight) }}</strong>
+                <p>{{ authed() ? '新A·D3821' : t('auth.loginForDetail') }}</p>
+                <strong>{{ authed() ? money(sample.freight) : t('auth.loginForDetail') }}</strong>
               </article>
             </div>
           </div>
@@ -336,7 +336,7 @@ function openLoad(id: string) {
   align-items: baseline;
   flex-wrap: wrap;
   gap: 8px 10px;
-  font-size: 32px;
+  font-size: clamp(24px, 1.6vw + 14px, 40px);
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: #10283f;
@@ -353,7 +353,7 @@ function openLoad(id: string) {
   letter-spacing: 0;
   color: #5c6b7a;
 }
-.map { height: 340px; position: relative; z-index: 0; isolation: isolate; overflow: hidden; }
+.map { height: clamp(240px, 32vh, 520px); position: relative; z-index: 0; isolation: isolate; overflow: hidden; }
 .ticker-wrap {
   margin-top: 14px;
   border-top: 1px solid #e3e8ef;
@@ -390,7 +390,7 @@ function openLoad(id: string) {
 @keyframes ticker { to { transform: translateX(-50%); } }
 .facts {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   padding: 28px 0 8px;
 }
@@ -428,7 +428,7 @@ function openLoad(id: string) {
 .frame { max-height: 560px; overflow: auto; padding: 2px; }
 .extras {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.15fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   align-items: start;
   padding: 28px 0 8px;
@@ -564,13 +564,13 @@ tbody tr:hover td { background: #f7f9fc; }
 .show { padding: 36px 0 88px; }
 .sheet {
   display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(24px, 3vw, 48px);
   align-items: center;
   background: #f3f5f8;
   border-radius: 28px;
-  padding: 48px 40px;
-  min-height: 520px;
+  padding: clamp(28px, 4vw, 48px) clamp(20px, 3vw, 40px);
+  min-height: clamp(420px, 48vh, 560px);
 }
 .copy { min-width: 0; }
 .sheet h2 {
@@ -631,8 +631,7 @@ tbody tr:hover td { background: #f7f9fc; }
 .screen article strong { display: block; margin-top: 4px; color: #9a3412; font-size: 15px; }
 @keyframes run { to { stroke-dashoffset: -80; } }
 @media (max-width: 1366px) {
-  .map { height: 300px; }
-  .hero h1 { font-size: 28px; }
+  .hero h1 { font-size: clamp(22px, 2.2vw, 28px); }
   .extras { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 @media (max-width: 1280px) {

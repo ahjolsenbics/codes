@@ -1,18 +1,24 @@
 /** 融资演示货盘：接口不可用时仍保持真实盘口密度。 */
-function stripPrivate(row: Record<string, any>) {
+export function stripPrivate(row: Record<string, any>) {
   return {
     ...row,
     company: '',
     credit: undefined,
+    verified: false,
     quoteCount: 0,
     expectPrice: null,
     grabPrice: null,
+    lowestQuote: null,
     plate: '',
     receiverPhone: undefined,
     receiverName: undefined,
     remark: undefined,
     shipperId: undefined,
     floorPrice: undefined,
+    preNo: '',
+    transitNo: '',
+    freight: 0,
+    carrier: '',
   }
 }
 

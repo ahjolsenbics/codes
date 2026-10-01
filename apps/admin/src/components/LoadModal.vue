@@ -119,7 +119,10 @@ onUnmounted(() => {
                 <div><small>{{ t('app.truck') }}</small><b>{{ item.truckLength || '—' }} m</b></div>
                 <div v-if="item.packing"><small>{{ t('detail.packing') }}</small><b>{{ packing(item.packing) }}</b></div>
                 <div v-if="item.cargoClass"><small>{{ t('detail.class') }}</small><b>{{ cargoClass(item.cargoClass) }}</b></div>
-                <div v-if="item.plate"><small>{{ t('tool.plate') }}</small><b>{{ item.plate }}</b></div>
+                <div v-if="String(item.id || '').startsWith('T-')">
+                  <small>{{ t('tool.plate') }}</small>
+                  <b>{{ authed() && item.plate ? item.plate : t('auth.needLogin') }}</b>
+                </div>
                 <div v-if="authed() && item.quoteCount"><small>{{ quotesLabel(item.quoteCount) }}</small><b>{{ item.quoteCount }}</b></div>
                 <div v-if="corridor"><small>{{ t('corr.rate') }}</small><b>{{ corridorRate(corridor) }}</b></div>
                 <div><small>{{ t('about.deposit') }}</small><b>¥200</b></div>
@@ -188,12 +191,12 @@ onUnmounted(() => {
   overflow: auto;
 }
 .dialog {
-  width: min(1080px, calc(100% - 8px));
+  width: min(1320px, calc(100% - clamp(12px, 3vw, 40px)));
   background: #fff;
   border-radius: 20px;
   padding: 22px 24px 26px;
   box-shadow: 0 24px 64px rgba(16, 24, 40, 0.22);
-  margin: 4vh 0 24px;
+  margin: 4vh auto 24px;
 }
 header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 18px; flex-wrap: wrap; }
 .kicker { margin: 0 0 4px; color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: 0.04em; }
@@ -202,7 +205,7 @@ h2 span { display: inline-flex; align-items: center; gap: 8px; }
 .arrow { position: relative; width: 46px; height: 2px; background: #b9cbe2; flex: none; }
 .arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left-color: #8fa9cc; }
 .tags { display: flex; align-items: center; gap: 8px; color: var(--muted); margin-top: 8px; }
-.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 22vw); gap: 16px; align-items: start; }
 .main { display: grid; gap: 12px; }
 .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .route { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }

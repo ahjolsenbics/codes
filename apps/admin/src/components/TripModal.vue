@@ -175,7 +175,8 @@ onUnmounted(() => {
             <span class="pill" :class="bill.shared ? 'ok' : 'warn'">{{ bill.shared ? t('trip.shared') : t('trip.unshared') }}</span>
             <div>
               <span>{{ t('trip.lastFix') }}</span>
-              <b>{{ place(bill.lastPoint) }} · {{ bill.lastAt }}</b>
+              <b v-if="authed()">{{ place(bill.lastPoint) }} · {{ bill.lastAt }}</b>
+              <b v-else>{{ t('auth.needLogin') }}</b>
             </div>
             <div>
               <span>{{ t('trip.carrier') }}</span>
@@ -230,12 +231,12 @@ onUnmounted(() => {
   overflow: auto;
 }
 .dialog {
-  width: min(920px, calc(100% - 8px));
+  width: min(1120px, calc(100% - clamp(12px, 3vw, 40px)));
   background: #fff;
   border-radius: 20px;
   padding: 22px 24px 26px;
   box-shadow: 0 24px 64px rgba(16, 24, 40, 0.22);
-  margin: 4vh 0 24px;
+  margin: 4vh auto 24px;
 }
 header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; }
 .kicker { margin: 0 0 4px; color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: 0.04em; }

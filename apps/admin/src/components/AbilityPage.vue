@@ -39,8 +39,8 @@ defineProps<{
   gap: 16px;
   margin-bottom: 20px;
 }
-h1 { margin: 0; font-size: 28px; color: var(--navy-2); letter-spacing: -0.03em; }
-.lead { margin: 8px 0 0; color: var(--muted); font-size: 15px; max-width: 68ch; line-height: 1.55; }
+h1 { margin: 0; font-size: clamp(22px, 1.6vw + 12px, 32px); color: var(--navy-2); letter-spacing: -0.03em; }
+.lead { margin: 8px 0 0; color: var(--muted); font-size: 15px; max-width: min(68ch, 100%); line-height: 1.55; }
 .acts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 @media (max-width: 980px) {
   .head { align-items: start; }

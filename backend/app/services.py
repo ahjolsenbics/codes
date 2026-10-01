@@ -182,6 +182,10 @@ def serialize_load_public(load: Load, quote_count: int = 0, lowest_quote: int | 
     data["lowestQuote"] = None
     data["quoteCount"] = 0
     data["company"] = ""
+    data["plate"] = ""
+    data["credit"] = None
+    data["verified"] = False
+    data["photos"] = []
     return data
 
 

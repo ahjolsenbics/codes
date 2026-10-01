@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { cargo, countryName, entity, loadStatus, money, modeLabel, place, quotesLabel, tone } from '../fmt'
 import Flag from './Flag.vue'
+import { isAppAuthed } from '../auth'
 import { t } from '../i18n'
 
 defineProps<{ item: Record<string, any> }>()
+const authed = isAppAuthed
 </script>
 
 <template>
@@ -25,12 +27,13 @@ defineProps<{ item: Record<string, any> }>()
     <div class="tags">
       <span class="pill" :class="tone(item.status)">{{ loadStatus(item.status) }}</span>
       <span class="pill">{{ modeLabel(item.matchMode) }}</span>
-      <span v-if="item.quoteCount" class="pill">{{ quotesLabel(item.quoteCount) }}</span>
-      <span v-if="item.company" class="who">{{ entity(item.company) }}</span>
+      <span v-if="authed() && item.quoteCount" class="pill">{{ quotesLabel(item.quoteCount) }}</span>
+      <span v-if="authed() && item.company" class="who">{{ entity(item.company) }}</span>
+      <span v-else-if="item.company" class="who">{{ t('auth.needLogin') }}</span>
     </div>
     <div class="price">
-      <em>{{ money(item.expectPrice || item.grabPrice) }}</em>
-      <small>{{ t('corr.rate') }}</small>
+      <em>{{ authed() ? money(item.expectPrice || item.grabPrice) : t('auth.loginForDetail') }}</em>
+      <small>{{ authed() ? t('corr.rate') : t('auth.needLogin') }}</small>
     </div>
   </article>
 </template>

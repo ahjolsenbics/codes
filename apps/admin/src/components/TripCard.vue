@@ -39,7 +39,7 @@ const authed = isAppAuthed
     <dl>
       <div>
         <dt>{{ t('trip.pre') }}</dt>
-        <dd>{{ bill.preNo }}</dd>
+        <dd>{{ authed() ? bill.preNo : t('auth.needLogin') }}</dd>
       </div>
       <div>
         <dt>{{ t('col.freight') }}</dt>

@@ -166,7 +166,7 @@ function barColor(st: string) {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   align-items: stretch;
-  height: min(68vh, 640px);
+  height: min(72vh, 760px);
   min-height: 440px;
 }
 .pane {

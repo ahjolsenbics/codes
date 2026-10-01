@@ -58,7 +58,7 @@ export const api = {
   register: (body: Record<string, unknown>) =>
     call('/api/v1/auth/register', { method: 'POST', body: JSON.stringify(body) }, null),
   me: () => ops('/api/v1/auth/me'),
-  market: () => call('/api/v1/public/market', {}, null),
+  market: () => call('/api/v1/public/market', {}, getAppToken()),
   dashboard: () => ops('/api/v1/admin/dashboard'),
   users: () => ops('/api/v1/admin/users'),
   patchUser: (id: string, disabled: boolean) =>

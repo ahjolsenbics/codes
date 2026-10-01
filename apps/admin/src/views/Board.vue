@@ -255,7 +255,7 @@ function open(id: string) {
 .chips-row .chip { border: 1px solid transparent; cursor: pointer; }
 .chips-row .chip.on { background: var(--navy); color: #fff; }
 .chips-row .ghost { background: transparent; border-color: var(--line); }
-.grid { display: grid; grid-template-columns: minmax(0, 1fr) 312px; gap: 22px; padding: 22px 0 64px; align-items: start; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 22vw); gap: 22px; padding: 22px 0 64px; align-items: start; }
 .count { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .count b { font-size: 15px; }
 .seg.small button { height: 28px; padding: 0 12px; font-size: 13px; }
